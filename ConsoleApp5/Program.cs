@@ -97,12 +97,12 @@ namespace ConsoleApp5
 						  group prenom by prenom[0] into groupe
 						  select new
 						  {
-							  lettre = groupe.Key,
+							  Lettre = groupe.Key,
 							  Prenoms = groupe.ToList()
 						  };
 			foreach (var resultat in requete)
 			{
-				Console.WriteLine(resultat.lettre);
+				Console.WriteLine(resultat.Lettre);
 				foreach (var prenom in resultat.Prenoms)
 				{
 					Console.WriteLine($"\t{prenom}");
@@ -111,6 +111,7 @@ namespace ConsoleApp5
 
 			Console.WriteLine("par group");
 			var requeteB = from prenom in prenoms
+						  orderby prenom ascending
 						  group prenom by prenom[0] into groupe
 						  let lettre = groupe.Key
 						  orderby lettre
@@ -122,7 +123,7 @@ namespace ConsoleApp5
 
 			foreach (var resultat in requete)
 			{
-				Console.WriteLine(resultat.lettre);
+				Console.WriteLine(resultat.Lettre);
 				foreach (var prenom in resultat.Prenoms)
 				{
 					Console.WriteLine($"\t{prenom}");
@@ -131,9 +132,24 @@ namespace ConsoleApp5
 
 			Console.WriteLine(new string('-', 35));
 
-			var requete2 = prenoms.OrderByDescending(prenom => prenom).Select(prenom => prenom);
+			var requete2 = prenoms.OrderBy(prenom => prenom)
+									.GroupBy(prenom => prenom[0])
+									.OrderBy(groupe => groupe.Key)
+									.Select(groupe => new
+									{
+										Lettre = groupe.Key,
+										Prenoms = groupe.ToList()
+
+									});
 			foreach (var resultat in requete2)
-				Console.WriteLine(resultat);
+			{
+				Console.WriteLine(resultat.Lettre);
+				foreach (var prenom in resultat.Prenoms)
+				{
+					Console.WriteLine($"\t{prenom}");
+				}
+			}
+			
 			Console.WriteLine(new string('-', 35));
 		}
 	}
